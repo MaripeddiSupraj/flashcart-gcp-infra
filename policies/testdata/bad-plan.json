@@ -1,0 +1,40 @@
+{
+  "resource_changes": [
+    {
+      "address": "google_compute_firewall.bad_ssh",
+      "type": "google_compute_firewall",
+      "provider_name": "registry.terraform.io/hashicorp/google",
+      "change": {
+        "actions": ["create"],
+        "after": {
+          "source_ranges": ["0.0.0.0/0"],
+          "allow": [{"protocol": "tcp", "ports": ["22"]}]
+        }
+      }
+    },
+    {
+      "address": "google_storage_bucket.bad_bucket",
+      "type": "google_storage_bucket",
+      "provider_name": "registry.terraform.io/hashicorp/google",
+      "change": {
+        "actions": ["create"],
+        "after": {
+          "uniform_bucket_level_access": false,
+          "public_access_prevention": "inherited",
+          "terraform_labels": {}
+        }
+      }
+    },
+    {
+      "address": "google_sql_database_instance.bad_sql",
+      "type": "google_sql_database_instance",
+      "provider_name": "registry.terraform.io/hashicorp/google",
+      "change": {
+        "actions": ["create"],
+        "after": {
+          "settings": [{"ip_configuration": [{"ipv4_enabled": true}]}]
+        }
+      }
+    }
+  ]
+}
