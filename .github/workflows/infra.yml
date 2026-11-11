@@ -69,11 +69,11 @@ jobs:
 
   dev:
     needs: detect
-    if: needs.detect.outputs.dev != '[]'
+    if: needs.detect.result == 'success' && needs.detect.outputs.dev != '' && needs.detect.outputs.dev != '[]'
     strategy:
       fail-fast: false
       matrix:
-        include: ${{ fromJson(needs.detect.outputs.dev) }}
+        include: ${{ fromJson(needs.detect.outputs.dev || '[]') }}
     uses: ./.github/workflows/terraform-stack.yml
     with:
       stack: ${{ matrix.stack }}
@@ -82,11 +82,11 @@ jobs:
 
   staging:
     needs: [detect, dev]
-    if: always() && needs.detect.outputs.staging != '[]' && (needs.dev.result == 'success' || needs.dev.result == 'skipped')
+    if: always() && needs.detect.result == 'success' && needs.detect.outputs.staging != '' && needs.detect.outputs.staging != '[]' && (needs.dev.result == 'success' || needs.dev.result == 'skipped')
     strategy:
       fail-fast: false
       matrix:
-        include: ${{ fromJson(needs.detect.outputs.staging) }}
+        include: ${{ fromJson(needs.detect.outputs.staging || '[]') }}
     uses: ./.github/workflows/terraform-stack.yml
     with:
       stack: ${{ matrix.stack }}
@@ -95,11 +95,11 @@ jobs:
 
   prod:
     needs: [detect, staging]
-    if: always() && needs.detect.outputs.prod != '[]' && (needs.staging.result == 'success' || needs.staging.result == 'skipped')
+    if: always() && needs.detect.result == 'success' && needs.detect.outputs.prod != '' && needs.detect.outputs.prod != '[]' && (needs.staging.result == 'success' || needs.staging.result == 'skipped')
     strategy:
       fail-fast: false
       matrix:
-        include: ${{ fromJson(needs.detect.outputs.prod) }}
+        include: ${{ fromJson(needs.detect.outputs.prod || '[]') }}
     uses: ./.github/workflows/terraform-stack.yml
     with:
       stack: ${{ matrix.stack }}
